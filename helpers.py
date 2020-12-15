@@ -1,9 +1,7 @@
 import datetime
-import requests
 import os
+import requests
 import sqlite3
-from time import sleep
-import threading
 
 
 def bitcoin_price_index_db():
@@ -14,25 +12,23 @@ def bitcoin_price_index_db():
     conn = sqlite3.connect('bitcoin.db')
     cursor = conn.cursor()
 
-    return conn.execute('SELECT * FROM historical;').fetchall()
+    return cursor.execute('SELECT * FROM historical;').fetchall()
 
 
-def bpi(date=datetime.date.today()):
+def bpi(start="2013-09-01", end=datetime.date.today()):
     """
     Requests the CoinDesk's API for json file containing a bitcoin price index on specific dates.
-    :param date: String or datetime object in format YYYY-MM-DD
+    :param start: String or datetime object in format YYYY-MM-DD
+    :param end: String or datetime object in format YYYY-MM-DD
     :return: A price_index dictionary if the request to the API goes right, None otherwise.
     """
-    url = f'https://api.coindesk.com/v1/bpi/historical/close.json?start=2013-09-01&end={date}'
+    url = f'https://api.coindesk.com/v1/bpi/historical/close.json?start={start}&end={end}'
 
     # Contact API
     try:
-        print(f'\tRequesting data from: {url}')
         response = requests.get(url)
-        print('\tAPI connection: OK')
 
     except requests.RequestException:
-        print(f"\tUnable to connect to the API")
         return None
 
     # Parse response
@@ -42,7 +38,6 @@ def bpi(date=datetime.date.today()):
         return price_index
 
     except (KeyError, TypeError, ValueError):
-        print("KeyError, TypeError, ValueError: couldn't parse response.")
         return None
 
 
@@ -55,14 +50,12 @@ def check_data(cursor):
     database_data = {item[0]: item[1] for item in cursor.execute('SELECT * FROM historical;').fetchall()}
     latest_database_date = list(database_data.keys())[-1]
 
-    price_index = bpi(latest_database_date)
+    price_index = bpi(end=latest_database_date)
 
     if price_index == database_data:
-        print('Database data: OK')
         return True
 
     else:
-        print('Database data: NOT MATCHING')
         return False
 
 
@@ -76,11 +69,9 @@ def check_schema(cursor):
     table_info = cursor.execute('PRAGMA table_info(historical);').fetchall()
 
     if table_info == model:
-        print('Database schema: OK')
         return True
 
     else:
-        print('Database schema: JEOPARDIZED')
         return False
 
 
@@ -88,11 +79,8 @@ def create_bitcoin_db():
     """Create the database and its cursor object to perform SQL commands"""
     conn = sqlite3.connect('bitcoin.db')
     c = conn.cursor()
-    print('bitcoin.db was successfully created.')
 
     # Create table
-    print('Creating table: CREATE TABLE historical (date TEXT NOT NULL, price NUMERIC NOT NULL);')
-
     c.execute('''CREATE TABLE historical (
         date TEXT NOT NULL,
         price NUMERIC NOT NULL
@@ -101,14 +89,12 @@ def create_bitcoin_db():
     price_index = bpi()
 
     # Saving the data in bitcoin.db
-    print("Saving the data in bitcoin.db")
     for key, value in price_index.items():
         c.execute('INSERT INTO historical (date, price) VALUES (?, ?);', (key, value))
 
     # Commit changes and close the connection
     conn.commit()
     conn.close()
-    print('bitcoin.db is set and up to date.')
 
 
 def is_up_to_date(cursor):
@@ -117,17 +103,12 @@ def is_up_to_date(cursor):
     :param cursor: sqlite3 Cursor object.
     :return: True/False.
     """
-    database_data = {item[0]: item[1] for item in cursor.execute('SELECT * FROM historical;').fetchall()}
-    latest_database_date = list(database_data.keys())[-1]
-
-    price_index = bpi(latest_database_date)
-    latest_bpi_date = list(price_index.keys())[-1]
+    latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
+    latest_bpi_date = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date][-1][0]
 
     if latest_database_date == latest_bpi_date:
-        print('Is the database up to date: YES')
         return True
     else:
-        print('Is the database up to date: NO')
         return False
 
 
@@ -142,11 +123,9 @@ def price(code=''):
 
     # Contact API
     try:
-        print(f'Requesting data from: {url}')
         response = requests.get(url)
 
     except requests.RequestException:
-        print(f"RequestException: couldn't connect to: {url}.")
         return None
 
     # Parse response
@@ -156,24 +135,35 @@ def price(code=''):
         return f'${rate:,.2f}'
 
     except (KeyError, TypeError, ValueError):
-        print("KeyError, TypeError, ValueError: couldn't parse response.")
         return None
 
 
-def start_app(filename):
-    """Terminal command to start a python script"""
-    os.system(f'python3 {filename}')
+def update_database():
+    # Verifies if the structure of the API data can be parsed by the application.
+    if not bpi():
+        return False
 
+    # Ensures the database exists
+    if not os.path.exists('bitcoin.db'):
+        create_bitcoin_db()
 
-def start_threads(target):
-    """Starts the application threads"""
-    files = ['database_manager.py', 'app.py']
-    processes = []
+    # Opening the database
+    conn = sqlite3.connect('bitcoin.db')
+    cursor = conn.cursor()
 
-    for file in files:
-        processes.append(threading.Thread(target=target, args=(file,)))
+    # Ensures both database schema and data are correct.
+    if not check_schema(cursor) or not check_data(cursor):
+        os.remove("bitcoin.db")
+        create_bitcoin_db()
 
-    for process in processes:
-        process.start()
-        sleep(1)
+    # Is up to date?
+    if not is_up_to_date(cursor):
+        latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
+        missing_price_index = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date]
 
+        for date, price in missing_price_index:
+            cursor.execute('INSERT INTO historical (date, price) VALUES (?, ?);', (date, price))
+
+    conn.commit()
+    conn.close()
+    return True
