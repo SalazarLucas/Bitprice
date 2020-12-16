@@ -6,11 +6,13 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    if update_database():
+    update = update_database()
+    current = current_price('USD')
+    if update and current:
         return render_template("index.html",
-                               price=price('USD'),
+                               price=current,
                                labels=[date[0] for date in bitcoin_price_index_db()],
-                               values=[h_price[1] for h_price in bitcoin_price_index_db()])
+                               values=[price[1] for price in bitcoin_price_index_db()])
 
     else:
         return render_template("api_problem.html")

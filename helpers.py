@@ -9,6 +9,7 @@ def bitcoin_price_index_db():
     Queries the database fetching all its data.
     :return: List of tuples containing date and price.
     """
+
     conn = sqlite3.connect('bitcoin.db')
     cursor = conn.cursor()
 
@@ -22,6 +23,7 @@ def bpi(start="2013-09-01", end=datetime.date.today()):
     :param end: String or datetime object in format YYYY-MM-DD
     :return: A price_index dictionary if the request to the API goes right, None otherwise.
     """
+
     url = f'https://api.coindesk.com/v1/bpi/historical/close.json?start={start}&end={end}'
 
     # Contact API
@@ -47,16 +49,13 @@ def check_data(cursor):
     :param cursor: sqlite3 Cursor object.
     :return: True/False.
     """
+
     database_data = {item[0]: item[1] for item in cursor.execute('SELECT * FROM historical;').fetchall()}
-    latest_database_date = list(database_data.keys())[-1]
+    latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
 
     price_index = bpi(end=latest_database_date)
 
-    if price_index == database_data:
-        return True
-
-    else:
-        return False
+    return price_index == database_data
 
 
 def check_schema(cursor):
@@ -65,18 +64,16 @@ def check_schema(cursor):
     :param cursor: sqlite3 Cursor object
     :return: True/False
     """
+
     model = [(0, 'date', 'TEXT', 1, None, 0), (1, 'price', 'NUMERIC', 1, None, 0)]
     table_info = cursor.execute('PRAGMA table_info(historical);').fetchall()
 
-    if table_info == model:
-        return True
-
-    else:
-        return False
+    return table_info == model
 
 
 def create_bitcoin_db():
     """Create the database and its cursor object to perform SQL commands"""
+
     conn = sqlite3.connect('bitcoin.db')
     c = conn.cursor()
 
@@ -103,16 +100,14 @@ def is_up_to_date(cursor):
     :param cursor: sqlite3 Cursor object.
     :return: True/False.
     """
+
     latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
     latest_bpi_date = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date][-1][0]
 
-    if latest_database_date == latest_bpi_date:
-        return True
-    else:
-        return False
+    return latest_database_date == latest_bpi_date
 
 
-def price(code=''):
+def current_price(code=''):
     """
     Request a json file from https://api.coindesk.com/v1/bpi/currentprice/<code>.json
     :param code: Currency symbol, like USD, BRL, etc
@@ -139,6 +134,11 @@ def price(code=''):
 
 
 def update_database():
+    """
+    Updates the database.
+    :return: True/False
+    """
+
     # Verifies if the structure of the API data can be parsed by the application.
     if not bpi():
         return False
@@ -156,7 +156,7 @@ def update_database():
         os.remove("bitcoin.db")
         create_bitcoin_db()
 
-    # Is up to date?
+    # Ensures to keep the database up to date
     if not is_up_to_date(cursor):
         latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
         missing_price_index = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date]
