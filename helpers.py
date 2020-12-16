@@ -102,7 +102,7 @@ def is_up_to_date(cursor):
     """
 
     latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
-    latest_bpi_date = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date][-1][0]
+    latest_bpi_date = [i for i in bpi(start=latest_database_date).items()][-1][0]
 
     return latest_database_date == latest_bpi_date
 
