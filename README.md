@@ -1,5 +1,5 @@
 <h1 align="center">
-  Bitcoin Price
+  Bitprice
   <div>
     <img src="https://img.shields.io/badge/Flask-Python-brightgreen"/>
     <img src="https://img.shields.io/badge/HTML5-red"/>
