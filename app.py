@@ -7,13 +7,13 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     current = current_price('USD')
-    dates = [date for date in bpi().keys()]
-    prices = [price for price in bpi().values()]
-    if all([current, dates, prices]):
+    price_index = bpi()
+
+    if all([current, price_index]):
         return render_template("index.html",
                                price=current,
-                               labels=dates,
-                               values=prices)
+                               labels=[date for date in price_index.keys()],
+                               values=[price for price in price_index.values()])
 
     else:
         return render_template("api_problem.html")
