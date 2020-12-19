@@ -1,19 +1,5 @@
 import datetime
-import os
 import requests
-import sqlite3
-
-
-def bitcoin_price_index_db():
-    """
-    Queries the database fetching all its data.
-    :return: List of tuples containing date and price.
-    """
-
-    conn = sqlite3.connect('bitcoin.db')
-    cursor = conn.cursor()
-
-    return cursor.execute('SELECT * FROM historical;').fetchall()
 
 
 def bpi(start="2013-09-01", end=datetime.date.today()):
@@ -43,70 +29,6 @@ def bpi(start="2013-09-01", end=datetime.date.today()):
         return None
 
 
-def check_data(cursor):
-    """
-    Checks if the data in the database matches the API's.
-    :param cursor: sqlite3 Cursor object.
-    :return: True/False.
-    """
-
-    database_data = {item[0]: item[1] for item in cursor.execute('SELECT * FROM historical;').fetchall()}
-    latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
-
-    price_index = bpi(end=latest_database_date)
-
-    return price_index == database_data
-
-
-def check_schema(cursor):
-    """
-    Checks if the schema of the database is not jeopardized.
-    :param cursor: sqlite3 Cursor object
-    :return: True/False
-    """
-
-    model = [(0, 'date', 'TEXT', 1, None, 0), (1, 'price', 'NUMERIC', 1, None, 0)]
-    table_info = cursor.execute('PRAGMA table_info(historical);').fetchall()
-
-    return table_info == model
-
-
-def create_bitcoin_db():
-    """Create the database and its cursor object to perform SQL commands"""
-
-    conn = sqlite3.connect('bitcoin.db')
-    c = conn.cursor()
-
-    # Create table
-    c.execute('''CREATE TABLE historical (
-        date TEXT NOT NULL,
-        price NUMERIC NOT NULL
-        );''')
-
-    price_index = bpi()
-
-    # Saving the data in bitcoin.db
-    for key, value in price_index.items():
-        c.execute('INSERT INTO historical (date, price) VALUES (?, ?);', (key, value))
-
-    # Commit changes and close the connection
-    conn.commit()
-    conn.close()
-
-
-def is_up_to_date(cursor):
-    """
-    Checks if data from database is up to date.
-    :param cursor: sqlite3 Cursor object.
-    :return: True/False.
-    """
-
-    latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
-    latest_bpi_date = [i for i in bpi(start=latest_database_date).items()][-1][0]
-
-    return latest_database_date == latest_bpi_date
-
-
 def current_price(code=''):
     """
     Request a json file from https://api.coindesk.com/v1/bpi/currentprice/<code>.json
@@ -131,39 +53,3 @@ def current_price(code=''):
 
     except (KeyError, TypeError, ValueError):
         return None
-
-
-def update_database():
-    """
-    Updates the database.
-    :return: True/False
-    """
-
-    # Verifies if the structure of the API data can be parsed by the application.
-    if not bpi():
-        return False
-
-    # Ensures the database exists
-    if not os.path.exists('bitcoin.db'):
-        create_bitcoin_db()
-
-    # Opening the database
-    conn = sqlite3.connect('bitcoin.db')
-    cursor = conn.cursor()
-
-    # Ensures both database schema and data are correct.
-    if not check_schema(cursor) or not check_data(cursor):
-        os.remove("bitcoin.db")
-        create_bitcoin_db()
-
-    # Ensures to keep the database up to date
-    if not is_up_to_date(cursor):
-        latest_database_date = cursor.execute("SELECT * FROM historical ORDER BY date DESC LIMIT 1;").fetchall()[0][0]
-        missing_price_index = [i for i in bpi(start=latest_database_date).items() if i[0] != latest_database_date]
-
-        for date, price in missing_price_index:
-            cursor.execute('INSERT INTO historical (date, price) VALUES (?, ?);', (date, price))
-
-    conn.commit()
-    conn.close()
-    return True
