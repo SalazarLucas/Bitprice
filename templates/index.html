@@ -1,53 +1,82 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-        <h1 class="display-4">Bitcoin Price</h1>
-        <h2 class="display-4">{{ price }} USD</h2>
-        <blockquote cite="https://bitcoin.org/en/">
-            <p class="lead">"Bitcoin is an innovative payment network and a new kind of money."</p>
-        </blockquote>
-        <p class="lead">Check out the historical data of Bitcoin price:</p>
-    </div>
-    <div id="canvas-container">
-        <canvas id="price_index"></canvas>
+    <div id="card">
+        <div id="asset_info">
+            <div id="title">
+                <h1>Bitcoin</h1>
+            </div>
+
+            <div id="spot_price">
+                <h2>{{ spot }}</h2>
+            </div>
+
+            <div id="converter" class="disabled">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <input type="number" class="currency_input" id="crypto" placeholder="BTC">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="number" class="currency_input" id="fiat" placeholder="USD">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="chart_area">
+            <div id="time_interval">
+                <div class="time_button" onclick="changeChart(ONE_DAY_AGO)">1D</div>
+                <div class="time_button" onclick="changeChart(FIVE_DAYS_AGO)">5D</div>
+                <div class="time_button active" onclick="changeChart(ONE_MONTH_AGO)">1M</div>
+                <div class="time_button disabled">1Y</div>
+                <div class="time_button disabled">5Y</div>
+                <div class="time_button disabled">MAX</div>
+            </div>
+            
+            <div id="canvas-container">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+
+        <p id="card_footer">Data provided by <a href="https://www.coinbase.com/">Coinbase</a></p>
     </div>
 {% endblock %}
 
-{% block javascript%}
+{% block javascript %}
+    <script type="text/javascript" src="{{ url_for('static', filename='helpers.js') }}"></script>
     <script>
-        var ctx = document.getElementById('price_index').getContext('2d')
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [{% for item in labels %}
-                            "{{ item }}",
-                            {% endfor %}],
-                datasets: [{
-                    label: 'Price',
-                    data: {{ values }},
-                    backgroundColor: "rgba(0, 187, 255, 0.5)",
-                    borderColor: "rgb(0, 187, 255)",
-                    borderWidth: 1,
-                    pointRadius: 0.5,
-                    pointHitRadius: 5,
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        ticks: {
-                            display: true,
-                            autoSkip: true,
-                            maxTicksLimit: 7.1
-                        }
-                    }]
-                },
-                title: {
-                    display: true,
-                    text: 'Historical Price BTC/USD'
-                }
-            }
-        })
+        // Configure time buttons
+        // Get the container element
+        let btnContainer = document.getElementById('time_interval')
+
+        // Get all buttons with class="time_button" inside container
+        let btns = btnContainer.getElementsByClassName('time_button')
+
+        // Loop through the buttons and add the active class to the current/clicked button
+        for (let i = 0; i < btns.length; i++) {
+            btns[i].addEventListener('click', function() {
+                let current = document.getElementsByClassName('active')
+                current[0].className = current[0].className.replace('active', '')
+                this.className += ' active'
+            })
+        }
+
+        // Server data
+        const LAST_DAY_RATES = {{ last_day_rates }}
+        const LAST_FIVE_DAYS_RATES = {{ last_five_days_rates }}
+        const LAST_MONTH_RATES = {{ last_month_rates }}
+
+        // Price index data
+        const ONE_DAY_AGO = oneDayAgoData(LAST_DAY_RATES)
+        const FIVE_DAYS_AGO = fiveDaysAgoData(LAST_FIVE_DAYS_RATES)
+        const ONE_MONTH_AGO = oneMonthAgoData(LAST_MONTH_RATES)
+        
+        changeChart(ONE_MONTH_AGO)
     </script>
 {% endblock %}

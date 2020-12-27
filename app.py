@@ -6,14 +6,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    current = current_price('USD')
-    price_index = bpi()
+    spot = spot_price('BTC-USD')
+    last_day_rates = historic_rates('BTC-USD', '1D')
+    last_five_days_rates = historic_rates('BTC-USD', '5D')
+    last_month_rates = historic_rates('BTC-USD', '1M')
 
-    if all([current, price_index]):
+    if all([spot, last_day_rates]):
         return render_template("index.html",
-                               price=current,
-                               labels=[date for date in price_index.keys()],
-                               values=[price for price in price_index.values()])
+                               spot=spot,
+                               last_day_rates=last_day_rates,
+                               last_five_days_rates=last_five_days_rates,
+                               last_month_rates=last_month_rates)
 
     else:
         return render_template("api_problem.html")
