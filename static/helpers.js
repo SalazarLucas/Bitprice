@@ -9,7 +9,7 @@ function timeStampConverter(unixTimeStamp) {
         'month': month[dateTime.getMonth()],
         'hour': dateTime.getHours(),
         'minute': dateTime.getMinutes(),
-        'year': dateTime.getYear()
+        'year': dateTime.getFullYear()
     }
 }
 
@@ -25,11 +25,8 @@ function oneDayAgoData(rates) {
         let formattedDateTime = hour + ":" + minute.substr(-2)
 
         timeLabels.push(formattedDateTime)
-        values.push(rates[i][1])
+        values.push(rates[i][3])
     }
-
-    timeLabels = timeLabels.reverse()
-    values = values.reverse()
 
     return {
         'time': timeLabels,
@@ -52,11 +49,8 @@ function fiveDaysAgoData(rates) {
         let formattedDateTime = `${weekDay}, ${day} ${month} ${hour}:${minute.substr(-2)}`
 
         timeLabels.push(formattedDateTime)
-        values.push(rates[i][1])
+        values.push(rates[i][3])
     }
-
-    timeLabels = timeLabels.reverse()
-    values = values.reverse()
 
     return {
         'time': timeLabels,
@@ -77,11 +71,74 @@ function oneMonthAgoData(rates) {
         let formattedDateTime = `${weekDay}, ${day} ${month}`
 
         timeLabels.push(formattedDateTime)
-        values.push(rates[i][1])
+        values.push(rates[i][3])
     }
 
-    timeLabels = timeLabels.reverse()
-    values = values.reverse()
+    return {
+        'time': timeLabels,
+        'values': values
+    }
+}
+
+function oneYearAgoData(rates) {
+    let timeLabels = []
+    let values = []
+
+    for (let i = 0; i < rates.length; i++){
+        let dateTime = timeStampConverter(rates[i][0])
+        let day = dateTime['day']
+        let month = dateTime['month']
+        let year = dateTime['year']
+
+        let formattedDateTime = `${day} ${month} ${year}`
+
+        timeLabels.push(formattedDateTime)
+        values.push(rates[i][3])
+    }
+
+    return {
+        'time': timeLabels,
+        'values': values
+    }
+}
+
+function fiveYearsAgoData(rates) {
+    let timeLabels = []
+    let values = []
+
+    for (let i = 0; i < rates.length; i++){
+        let dateTime = timeStampConverter(rates[i][0])
+        let day = dateTime['day']
+        let month = dateTime['month']
+        let year = dateTime['year']
+
+        let formattedDateTime = `${day} ${month} ${year}`
+
+        timeLabels.push(formattedDateTime)
+        values.push(rates[i][3])
+    }
+
+    return {
+        'time': timeLabels,
+        'values': values
+    }
+}
+
+function max(rates) {
+    let timeLabels = []
+    let values = []
+
+    for (let i = 0; i < rates.length; i++){
+        let dateTime = timeStampConverter(rates[i][0])
+        let day = dateTime['day']
+        let month = dateTime['month']
+        let year = dateTime['year']
+
+        let formattedDateTime = `${day} ${month} ${year}`
+
+        timeLabels.push(formattedDateTime)
+        values.push(rates[i][3])
+    }
 
     return {
         'time': timeLabels,

@@ -34,9 +34,9 @@
                 <div class="time_button" onclick="changeChart(ONE_DAY_AGO)">1D</div>
                 <div class="time_button" onclick="changeChart(FIVE_DAYS_AGO)">5D</div>
                 <div class="time_button active" onclick="changeChart(ONE_MONTH_AGO)">1M</div>
-                <div class="time_button disabled">1Y</div>
-                <div class="time_button disabled">5Y</div>
-                <div class="time_button disabled">MAX</div>
+                <div class="time_button" onclick="changeChart(ONE_YEAR_AGO)">1Y</div>
+                <div class="time_button" onclick="changeChart(FIVE_YEARS_AGO)">5Y</div>
+                <div class="time_button" onclick="changeChart(MAX)">MAX</div>
             </div>
             
             <div id="canvas-container">
@@ -71,11 +71,17 @@
         const LAST_DAY_RATES = {{ last_day_rates }}
         const LAST_FIVE_DAYS_RATES = {{ last_five_days_rates }}
         const LAST_MONTH_RATES = {{ last_month_rates }}
+        const LAST_YEAR_RATES = {{ last_year_rates }}
+        const LAST_FIVE_YEAR_RATES = {{ last_five_year_rates }}
+        const MAX_RATES = {{ max_rates }}
 
         // Price index data
         const ONE_DAY_AGO = oneDayAgoData(LAST_DAY_RATES)
         const FIVE_DAYS_AGO = fiveDaysAgoData(LAST_FIVE_DAYS_RATES)
         const ONE_MONTH_AGO = oneMonthAgoData(LAST_MONTH_RATES)
+        const ONE_YEAR_AGO = oneYearAgoData(LAST_YEAR_RATES)
+        const FIVE_YEARS_AGO = fiveYearsAgoData(LAST_FIVE_YEAR_RATES)
+        const MAX = max(MAX_RATES)
         
         changeChart(ONE_MONTH_AGO)
     </script>
