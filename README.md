@@ -3,7 +3,7 @@
   <div>
     <img src="https://img.shields.io/badge/Flask-Python-brightgreen"/>
     <img src="https://img.shields.io/badge/HTML5-red"/>
-    <img src="https://img.shields.io/badge/CSS3-Bootstrap-purple"/>
+    <img src="https://img.shields.io/badge/CSS3-purple"/>
     <img src="https://img.shields.io/badge/JavaScript-yellow"/>
   </div>
 </h1>
