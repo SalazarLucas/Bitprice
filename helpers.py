@@ -85,6 +85,6 @@ def historic_rates(currency_pair, key):
             for rate in reversed(rates):
                 maximum.append(rate)
 
-            start = (datetime.fromtimestamp(rates[0][0]) + timedelta(days=1))
+            start = datetime.utcfromtimestamp(rates[0][0]) + timedelta(days=1)
 
         return maximum
