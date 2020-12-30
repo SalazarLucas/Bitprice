@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from time import sleep
 import requests
+import sys
 
 
 def spot_price(currency_pair='BTC-USD'):
@@ -53,6 +55,7 @@ def historic_rates(currency_pair, key):
         # Contact API
         try:
             response = requests.get(url, params=params)
+            sleep(0.25)
 
         except requests.RequestException:
             return None
@@ -76,15 +79,22 @@ def historic_rates(currency_pair, key):
             # Contact API
             try:
                 response = requests.get(url, params=params)
+                sleep(0.25)
 
             except requests.RequestException:
                 return None
 
-            rates = response.json()
+            # Parse Response
+            try:
+                rates = response.json()
 
-            for rate in reversed(rates):
-                maximum.append(rate)
+                for rate in reversed(rates):
+                    maximum.append(rate)
 
-            start = datetime.utcfromtimestamp(rates[0][0]) + timedelta(days=1)
+                start = datetime.utcfromtimestamp(rates[0][0]) + timedelta(days=1)
+
+            except KeyError:
+                print(f"{rates}", file=sys.stderr)
+                print(f"{request}", file=sys.stderr)
 
         return maximum
