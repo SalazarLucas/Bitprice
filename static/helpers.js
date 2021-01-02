@@ -223,3 +223,17 @@ function changeChart(data) {
         }
     })
 }
+
+function convert(key) {
+    let spot_price = Number(document.querySelector('#spot_price > h2').innerHTML.replace('$', ''))
+
+    if (key == 'crypto')
+    {
+        document.getElementById('fiat').value = Number(document.getElementById('crypto').value) * spot_price
+    }
+
+    else if (key == 'fiat')
+    {
+        document.getElementById('crypto').value = Number(document.getElementById('fiat').value) / spot_price
+    }
+}

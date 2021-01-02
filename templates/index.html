@@ -11,17 +11,17 @@
                 <h2>{{ spot }}</h2>
             </div>
 
-            <div id="converter" class="disabled">
+            <div id="converter">
                 <table>
                     <tbody>
                         <tr>
                             <td>
-                                <input type="number" class="currency_input" id="crypto" placeholder="BTC">
+                                <input type="number" class="currency_input" id="crypto" placeholder="BTC" min="0" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13)? null : event.charCode  >= 46 && event.charCode <= 57">
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="number" class="currency_input" id="fiat" placeholder="USD">
+                                <input type="number" class="currency_input" id="fiat" placeholder="USD" min="0" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13)? null : event.charCode  >= 46 && event.charCode <= 57">
                             </td>
                         </tr>
                     </tbody>
@@ -66,6 +66,10 @@
                 this.className += ' active'
             })
         }
+
+        // Add event listeners to the input fields
+        document.getElementById('crypto').addEventListener('input', () => convert('crypto'))
+        document.getElementById('fiat').addEventListener('change', () => convert('fiat'))
 
         // Server data
         const LAST_DAY_RATES = {{ last_day_rates }}

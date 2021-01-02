@@ -34,7 +34,7 @@ def historic_rates(currency_pair, key):
     """
     Request the historic rates data from Coinbase API for a given currency pair.
     :param currency_pair: Crypto/fiat currencies pair.
-    :param key: 1D, 5D, 1M, 1Y, 5Y, MAX (1 Day, 5 Days, 1 Month...).
+    :param key: 1D, 5D, MAX (1 Day, 5 Days, MAX).
     :return: Two-dimensional matrix [ time, low, high, open, close, volume ].
     """
     url = f'https://api.pro.coinbase.com/products/{currency_pair}/candles'
@@ -85,9 +85,8 @@ def historic_rates(currency_pair, key):
                 return None
 
             # Parse Response
+            rates = response.json()
             try:
-                rates = response.json()
-
                 for rate in reversed(rates):
                     maximum.append(rate)
 
