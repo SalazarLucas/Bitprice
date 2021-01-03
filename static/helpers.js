@@ -226,14 +226,16 @@ function changeChart(data) {
 
 function convert(key) {
     let spot_price = Number(document.querySelector('#spot_price > h2').innerHTML.replace('$', ''))
+    let crypto = document.getElementById('crypto')
+    let fiat = document.getElementById('fiat')
 
     if (key == 'crypto')
     {
-        document.getElementById('fiat').value = Number(document.getElementById('crypto').value) * spot_price
+        crypto.value ? fiat.value = Number(crypto.value) * spot_price : fiat.value = ""
     }
 
     else if (key == 'fiat')
     {
-        document.getElementById('crypto').value = Number(document.getElementById('fiat').value) / spot_price
+        fiat.value ? crypto.value = Number(fiat.value) / spot_price : crypto.value = ""
     }
 }

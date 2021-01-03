@@ -16,12 +16,14 @@
                     <tbody>
                         <tr>
                             <td>
-                                <input type="number" class="currency_input" id="crypto" placeholder="BTC" min="0" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13)? null : event.charCode  >= 46 && event.charCode <= 57">
+                                <label for="crypto">BTC</label>
+                                <input type="number" class="currency_input" id="crypto" min="0" oninput="this.value = Number(this.value) < Number(this.min) ? '' : this.value">
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="number" class="currency_input" id="fiat" placeholder="USD" min="0" onkeypress="return (event.charCode == 8 || event.charCode == 0 || event.charCode == 13)? null : event.charCode  >= 46 && event.charCode <= 57">
+                                <label for="fiat">USD</label>
+                                <input type="number" class="currency_input" id="fiat" min="0" oninput="this.value = Number(this.value) < Number(this.min) ? '' : this.value">
                             </td>
                         </tr>
                     </tbody>
@@ -69,7 +71,7 @@
 
         // Add event listeners to the input fields
         document.getElementById('crypto').addEventListener('input', () => convert('crypto'))
-        document.getElementById('fiat').addEventListener('change', () => convert('fiat'))
+        document.getElementById('fiat').addEventListener('input', () => convert('fiat'))
 
         // Server data
         const LAST_DAY_RATES = {{ last_day_rates }}
