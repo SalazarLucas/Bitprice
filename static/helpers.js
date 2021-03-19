@@ -1,241 +1,81 @@
-function timeStampConverter(unixTimeStamp) {
-    let dateTime = new Date(unixTimeStamp * 1000)
-    weekDay = ['Mon', 'Sun', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+async function printChart(key, value, color) {
+  let times = await value.map(time => time[0])
+  let prices = await value.map(price => price[1])
 
-    return {
-        'weekday': weekDay[dateTime.getDay()],
-        'day': dateTime.getDate(),
-        'month': month[dateTime.getMonth()],
-        'hour': dateTime.getHours(),
-        'minute': dateTime.getMinutes(),
-        'year': dateTime.getFullYear()
-    }
-}
+  let chart = document.getElementById(key).getContext('2d');
 
-function oneDayAgoData(rates) {
-    let timeLabels = []
-    let values = []
+  let gradient = chart.createLinearGradient(0, 0, 0, 400);
 
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let hour = dateTime['hour']
-        let minute = "0" + dateTime['minute']
+  gradient.addColorStop(0, color);
+  gradient.addColorStop(.425, 'rgba(255,193,119,0)');
 
-        let formattedDateTime = hour + ":" + minute.substr(-2)
+  Chart.defaults.global.defaultFontFamily = 'Red Hat Text';
+  Chart.defaults.global.defaultFontSize = 12;
 
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
+  createChart = new Chart(chart, {
+    type: 'line',
+    data: {
+      labels: times,
+      datasets: [{
+        label: '$',
+        data: prices,
+        backgroundColor: gradient,
+        borderColor: color,
+        borderJoinStyle: 'round',
+        borderCapStyle: 'round',
+        borderWidth: 3,
+        pointRadius: 0,
+        pointHitRadius: 10,
+        lineTension: .2,
+      }]
+    },
 
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
+    options: {
+      title: {
+        display: false,
+        text: 'Heckin Chart!',
+        fontSize: 35
+      },
 
-function fiveDaysAgoData(rates) {
-    let timeLabels = []
-    let values = []
+      legend: {
+        display: false
+      },
 
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let weekDay = dateTime['weekday']
-        let day = dateTime['day']
-        let month = dateTime['month']
-        let hour = dateTime['hour']
-        let minute = '0' + dateTime['minute']
-
-        let formattedDateTime = `${weekDay}, ${day} ${month} ${hour}:${minute.substr(-2)}`
-
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
-
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
-
-function oneMonthAgoData(rates) {
-    let timeLabels = []
-    let values = []
-
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let weekDay = dateTime['weekday']
-        let day = dateTime['day']
-        let month = dateTime['month']
-
-        let formattedDateTime = `${weekDay}, ${day} ${month}`
-
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
-
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
-
-function oneYearAgoData(rates) {
-    let timeLabels = []
-    let values = []
-
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let day = dateTime['day']
-        let month = dateTime['month']
-        let year = dateTime['year']
-
-        let formattedDateTime = `${day} ${month} ${year}`
-
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
-
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
-
-function fiveYearsAgoData(rates) {
-    let timeLabels = []
-    let values = []
-
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let day = dateTime['day']
-        let month = dateTime['month']
-        let year = dateTime['year']
-
-        let formattedDateTime = `${day} ${month} ${year}`
-
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
-
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
-
-function max(rates) {
-    let timeLabels = []
-    let values = []
-
-    for (let i = 0; i < rates.length; i++){
-        let dateTime = timeStampConverter(rates[i][0])
-        let day = dateTime['day']
-        let month = dateTime['month']
-        let year = dateTime['year']
-
-        let formattedDateTime = `${day} ${month} ${year}`
-
-        timeLabels.push(formattedDateTime)
-        values.push(rates[i][3])
-    }
-
-    return {
-        'time': timeLabels,
-        'values': values
-    }
-}
-
-function changeChart(data) {
-    document.getElementById('chart').remove()
-    
-    document.getElementById('canvas-container').innerHTML = '<canvas id="chart"></canvas>'
-
-    let btcChart = document.getElementById('chart').getContext('2d')
-    
-    let createChart = new Chart(btcChart, {
-        type: 'line',
-        data: {
-            labels: data['time'],
-            datasets: [{
-                label: '$',
-                data: data['values'],
-                backgroundColor: 'rgba(247, 147, 26, 0.3)',
-                borderColor: 'rgb(247, 147, 26)',
-                borderWidth: 1.5,
-                lineTension: 0,
-                pointRadius: 0,
-                pointHitRadius: 10
-            }]
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            title: {
-                display: false,
-            },
-
-            legend: {
-                display: false
-            },
-
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0
-                }
-            },
-
-            scales: {
-                xAxes: [{
-                    display: true,
-                    ticks: {
-                        display: false
-                    },
-                    gridLines: {
-                        display: false
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    ticks: {
-                        maxTicksLimit: 3.1
-                    }
-                }]
-            },
-
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-                displayColors: false,
-                yPadding: 10,
-                xPadding: 10,
-                position: 'nearest',
-                carretSize: 10,
-                backgroundColor: 'rgba(48, 48, 48, 0.8)',
-                bodyFontSize: 15,
-                bodyFontColor: '#ffffff',
-                titleColor: '#ffffff'
-            }
+      layout: {
+        padding: {
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0
         }
-    })
-}
+      },
 
-function convert(key) {
-    let spot_price = Number(document.querySelector('#spot_price > h2').innerHTML.replace('$', ''))
-    let crypto = document.getElementById('crypto')
-    let fiat = document.getElementById('fiat')
+      scales: {
+        xAxes: [{
+          display: false,
+          gridLines: {}
+        }],
+        yAxes: [{
+          display: false,
+          gridLines: {}
+        }]
+      },
 
-    if (key == 'crypto')
-    {
-        crypto.value ? fiat.value = Number(crypto.value) * spot_price : fiat.value = ""
+      tooltips: {
+        callbacks: {
+          //This removes the tooltip title
+          title: function() {}
+       },
+        //this removes legend color
+        displayColors: false,
+        yPadding: 10,
+        xPadding: 10,
+        position: 'nearest',
+        caretSize: 10,
+        backgroundColor: 'rgba(255,255,255,.9)',
+        bodyFontSize: 15,
+        bodyFontColor: '#303030' 
+      }
     }
-
-    else if (key == 'fiat')
-    {
-        fiat.value ? crypto.value = Number(fiat.value) / spot_price : crypto.value = ""
-    }
+  });
 }

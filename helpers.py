@@ -1,17 +1,64 @@
-from datetime import datetime, timedelta
-from time import sleep
 import requests
-import sys
+import datetime
+import json
+
+NOW = datetime.datetime.now()
+START = (NOW - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
+END = NOW.strftime('%Y-%m-%d')
 
 
-def spot_price(currency_pair='BTC-USD'):
-    """
-    Request the spot price from Coinbase API for a given currency pair.
-    :param currency_pair: Crypto/fiat currencies pair.
-    :return: Spot price
-    """
+def spots(base='', currency='USD'):
+    if base:
+        base = base + '-'
 
-    url = f'https://api.coinbase.com/v2/prices/{currency_pair}/spot'
+    url = f"https://api.coinbase.com/v2/prices/{base}{currency}/spot"
+
+    # Contact endpoint
+    try:
+        response = requests.get(url)
+    
+    except requests.RequestException:
+        return None
+    
+    # Parse response
+    try:
+        spot = response.json()['data']
+    
+    except (KeyError, ValueError, TypeError):
+        return None
+    
+    return spot
+
+
+def rates(base, currency='USD', start=START, end=END, granularity=86400):
+    url = f'https://api.pro.coinbase.com/products/{base}-{currency}/candles'
+    params = {
+        'start': start,
+        'end': end,
+        'granularity': granularity
+    }
+    
+    # Contact endpoint
+    try:
+        response = requests.get(url, params=params)
+    
+    except requests.RequestException:
+        return None
+    
+    # Parse response
+    try:
+        rates = response.json()
+        rates.sort(reverse=False)
+    
+    except AttributeError:
+        return None
+
+    return [[rate[0], rate[2]] for rate in rates]
+
+
+def currency_names(currency=''):
+    """Return id and name for all cryptocurrencies from Coinbase"""
+    url = f'https://api.pro.coinbase.com/currencies/{currency}'
 
     # Contact API
     try:
@@ -23,77 +70,41 @@ def spot_price(currency_pair='BTC-USD'):
     # Parse response
     try:
         quote = response.json()
-        spot = quote['data']['amount']
-        return f'${spot}'
+        quote = {cur['id']: {'name': cur['name']} for cur in quote if cur['details']['type'] == 'crypto'}
 
     except (KeyError, TypeError, ValueError):
         return None
+    
+    return quote
 
 
-def historic_rates(currency_pair, key):
-    """
-    Request the historic rates data from Coinbase API for a given currency pair.
-    :param currency_pair: Crypto/fiat currencies pair.
-    :param key: 1D, 5D, MAX (1 Day, 5 Days, MAX).
-    :return: Two-dimensional matrix [ time, low, high, open, close, volume ].
-    """
-    url = f'https://api.pro.coinbase.com/products/{currency_pair}/candles'
-    now = datetime.now()
+def currency_data():
+    data = {}
+    names = currency_names()
 
-    keys = {'1D': {'days_ago': 1,
-                   'granularity': 300},  # 300 second intervals (5 min)
-            '5D': {'days_ago': 5,
-                   'granularity': 3600},
-            'MAX': {'days_ago': (now - datetime.strptime('2015-07-19', '%Y-%m-%d')).days,
-                    'granularity': 86400}}
+    for spot in spots():
+        symbol = spot['base']
+        rate = rates(symbol)
 
-    if key in ['1D', '5D']:
-        params = {'start': (now - timedelta(days=keys[key]['days_ago'])).strftime('%Y-%m-%d %H:%M:%S'),
-                  'end': now.strftime('%Y-%m-%d %H:%M:%S'),
-                  'granularity': keys[key]['granularity']}
+        if rate != None:
+            name = names[symbol]['name']
+            amount = f'{float(spot["amount"]):.2f}'
 
-        # Contact API
-        try:
-            response = requests.get(url, params=params)
-            sleep(0.25)
+            with open('colors.json', 'r') as file:
+                colors = json.load(file)
 
-        except requests.RequestException:
-            return None
+            data[symbol] = {
+                'name': name,
+                'amount': amount,
+                'color': colors[symbol],
+                'rates': rate
+            }
+    
+    return data
 
-        rates = list(reversed(response.json()))
 
-        return rates
-
-    # Coinbase API returns maximum 300 aggregations per request for historical data.
-    # In order to get yearly data, with 86400 granularity seconds, it is needed to do multiple requests.
-    elif key == 'MAX':
-        maximum = []
-        requests_number = round(keys['MAX']['days_ago'] / 300)
-        start = datetime.strptime('2015-07-19', '%Y-%m-%d')
-
-        for request in range(requests_number):
-            params = {'start': start.strftime('%Y-%m-%d'),
-                      'end': (start + timedelta(days=300)).strftime('%Y-%m-%d'),
-                      'granularity': 86400}
-
-            # Contact API
-            try:
-                response = requests.get(url, params=params)
-                sleep(0.25)
-
-            except requests.RequestException:
-                return None
-
-            # Parse Response
-            rates = response.json()
-            try:
-                for rate in reversed(rates):
-                    maximum.append(rate)
-
-                start = datetime.utcfromtimestamp(rates[0][0]) + timedelta(days=1)
-
-            except KeyError:
-                print(f"{rates}", file=sys.stderr)
-                print(f"{request}", file=sys.stderr)
-
-        return maximum
+def colors():
+    with open('colors.json', 'r') as file:
+        data = json.load(file)
+    
+    return data

@@ -1,94 +1,28 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <div id="card">
-        <div id="asset_info">
-            <div id="title">
-                <h1>Bitcoin</h1>
-            </div>
+    <main>
+        {% for k, v in data.items() %}
+            <div class="cryptoCurrencyCard" id="{{ k }}Card">
+                <header>
+                    <section class="cryptocurrencyName">
+                        <img src="static/icons/{{ k }}.png">
+                        <abbr title="{{ k }}">
+                            {{ v['name'] }}
+                        </abbr>
+                    </section>
+                    <section class="cryptoCurrencyPrice">
+                        $ {{ v['amount'] }}
+                    </section>
+                </header>
 
-            <div id="spot_price">
-                <h2>{{ spot }}</h2>
+                <canvas class="cardChart" id="{{ k }}"></canvas>
             </div>
-
-            <div id="converter">
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <label for="crypto">BTC</label>
-                                <input type="number" class="currency_input" id="crypto" min="0" oninput="this.value = Number(this.value) < Number(this.min) ? '' : this.value">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label for="fiat">USD</label>
-                                <input type="number" class="currency_input" id="fiat" min="0" oninput="this.value = Number(this.value) < Number(this.min) ? '' : this.value">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div id="chart_area">
-            <div id="time_interval">
-                <div class="time_button" onclick="changeChart(ONE_DAY_AGO)">1D</div>
-                <div class="time_button" onclick="changeChart(FIVE_DAYS_AGO)">5D</div>
-                <div class="time_button active" onclick="changeChart(ONE_MONTH_AGO)">1M</div>
-                <div class="time_button" onclick="changeChart(ONE_YEAR_AGO)">1Y</div>
-                <div class="time_button" onclick="changeChart(FIVE_YEARS_AGO)">5Y</div>
-                <div class="time_button" onclick="changeChart(MAX)">MAX</div>
-            </div>
-            
-            <div id="canvas-container">
-                <canvas id="chart"></canvas>
-            </div>
-        </div>
-
-        <p id="card_footer">Data provided by <a href="https://www.coinbase.com/">Coinbase</a></p>
-    </div>
+            <script>printChart("{{ k | safe }}", {{ v["rates"] | safe }}, "{{ colors[k] | safe }}")</script>
+        {% endfor %}
+    </main>
 {% endblock %}
 
 {% block javascript %}
     <script type="text/javascript" src="{{ url_for('static', filename='helpers.js') }}"></script>
-    <script>
-        // Configure time buttons
-        // Get the container element
-        let btnContainer = document.getElementById('time_interval')
-
-        // Get all buttons with class="time_button" inside container
-        let btns = btnContainer.getElementsByClassName('time_button')
-
-        // Loop through the buttons and add the active class to the current/clicked button
-        for (let i = 0; i < btns.length; i++) {
-            btns[i].addEventListener('click', function() {
-                let current = document.getElementsByClassName('active')
-                current[0].className = current[0].className.replace('active', '')
-                this.className += ' active'
-            })
-        }
-
-        // Add event listeners to the input fields
-        document.getElementById('crypto').addEventListener('input', () => convert('crypto'))
-        document.getElementById('fiat').addEventListener('input', () => convert('fiat'))
-
-        // Server data
-        const LAST_DAY_RATES = {{ last_day_rates }}
-        const LAST_FIVE_DAYS_RATES = {{ last_five_days_rates }}
-        const LAST_MONTH_RATES = {{ last_month_rates }}
-        const LAST_YEAR_RATES = {{ last_year_rates }}
-        const LAST_FIVE_YEAR_RATES = {{ last_five_year_rates }}
-        const MAX_RATES = {{ max_rates }}
-
-        // Price index data
-        const ONE_DAY_AGO = oneDayAgoData(LAST_DAY_RATES)
-        const FIVE_DAYS_AGO = fiveDaysAgoData(LAST_FIVE_DAYS_RATES)
-        const ONE_MONTH_AGO = oneMonthAgoData(LAST_MONTH_RATES)
-        const ONE_YEAR_AGO = oneYearAgoData(LAST_YEAR_RATES)
-        const FIVE_YEARS_AGO = fiveYearsAgoData(LAST_FIVE_YEAR_RATES)
-        const MAX = max(MAX_RATES)
-        
-        changeChart(ONE_MONTH_AGO)
-    </script>
 {% endblock %}
