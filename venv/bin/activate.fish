@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/salazar/PycharmProjects/we_are_cripto/venv"
+set -gx VIRTUAL_ENV "/home/lucassalazar/Desktop/Projects/Bitprice/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

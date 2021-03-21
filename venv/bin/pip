@@ -1,4 +1,4 @@
-#!/home/salazar/PycharmProjects/we_are_cripto/venv/bin/python
+#!/home/lucassalazar/Desktop/Projects/Bitprice/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
