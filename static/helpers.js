@@ -6,7 +6,9 @@ async function printChart(key, value, color) {
 
   let gradient = chart.createLinearGradient(0, 0, 0, 400);
 
-  gradient.addColorStop(0, color);
+  let alpha_color = color + "80"
+
+  gradient.addColorStop(0, alpha_color);
   gradient.addColorStop(.425, 'rgba(255,193,119,0)');
 
   Chart.defaults.global.defaultFontFamily = 'Red Hat Text';
@@ -78,4 +80,23 @@ async function printChart(key, value, color) {
       }
     }
   });
+}
+
+function changeSearch() {
+  searchButton = document.querySelector("#searchBtn")
+  searchInput = document.querySelector("#searchInp")
+
+  if (searchInput.style.visibility === "hidden") {
+    searchInput.style.visibility = "visible"
+    searchInput.focus()
+    searchInput.style.width = "20vw"
+
+    searchButton.style.visibility = "hidden"
+  }
+  else if (searchInput.value.length === 0) {
+    searchButton.style.visibility = "visible"
+
+    searchInput.style.visibility = "hidden"
+    searchInput.style.width = 0
+  }
 }

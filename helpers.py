@@ -93,12 +93,21 @@ def currency_data():
             with open('colors.json', 'r') as file:
                 colors = json.load(file)
 
-            data[symbol] = {
-                'name': name,
-                'amount': amount,
-                'color': colors[symbol],
-                'rates': rate
-            }
+            try:
+                data[symbol] = {
+                    'name': name,
+                    'amount': amount,
+                    'color': colors[symbol],
+                    'rates': rate
+                }
+            
+            except KeyError:
+                    data[symbol] = {
+                    'name': name,
+                    'amount': amount,
+                    'color': "#202020",
+                    'rates': rate
+                }
     
     return data
 

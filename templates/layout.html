@@ -10,12 +10,15 @@
 		<link rel="image_src" href="{{ url_for('static', filename='thumb.png') }}">
 
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-		{% block javascript %}{% endblock %}
+		<script type="text/javascript" src="{{ url_for('static', filename='helpers.js') }}"></script>
 	</head>
 	<body>
 		<header id="appNavBar">
 			<h1>BitPrice</h1>
-			<div id="search"></div>
+			<div id="searchBar" style="display: flex;">
+				<div id="searchBtn" onclick="changeSearch();"></div>
+				<input id="searchInp" type="text" onfocusout="changeSearch()">
+			</div>
 		</header>
 
 		{% block main %}{% endblock %}

@@ -29,14 +29,26 @@ body {
     font-weight: lighter;
 }
 
-#search {
+#searchBtn {
     width: 32px;
     height: 32px;
     background-image: url(/static/search.png);
 }
 
-#search:hover {
+#searchBtn:hover {
     cursor: pointer;
+}
+
+#searchInp {
+    background-color: rgba(0, 0, 0, 0);
+    visibility: hidden;
+    border: 1px solid #cac8c8;
+    border-radius: 5px;
+    outline: none;
+    width: 0;
+    padding: 5px;
+    transition-property: width;
+    transition-duration: 0.7s;
 }
 
 main {
@@ -48,7 +60,7 @@ main {
 .cryptoCurrencyCard {
     box-shadow: 7px 7px 5px rgba(100, 100, 100, 0.1);
     border-radius: 10px;
-    background-color: rgb(237, 240, 243);
+    background-color: rgb(255, 255, 255);
     margin: 25px;
     min-width: 300px;
     width: 25vw;
