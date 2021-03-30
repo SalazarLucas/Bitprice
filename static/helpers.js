@@ -2,17 +2,17 @@ async function printChart(key, value, color) {
   let times = await value.map(time => time[0])
   let prices = await value.map(price => price[1])
 
-  let chart = document.getElementById(key).getContext('2d');
+  let chart = document.getElementById(key).getContext('2d')
 
-  let gradient = chart.createLinearGradient(0, 0, 0, 400);
+  let gradient = chart.createLinearGradient(0, 0, 0, 400)
 
   let alpha_color = color + "80"
 
-  gradient.addColorStop(0, alpha_color);
-  gradient.addColorStop(.425, 'rgba(255,193,119,0)');
+  gradient.addColorStop(0, alpha_color)
+  gradient.addColorStop(.425, 'rgba(255,193,119,0)')
 
-  Chart.defaults.global.defaultFontFamily = 'Red Hat Text';
-  Chart.defaults.global.defaultFontSize = 12;
+  Chart.defaults.global.defaultFontFamily = 'Red Hat Text'
+  Chart.defaults.global.defaultFontSize = 12
 
   createChart = new Chart(chart, {
     type: 'line',
@@ -79,7 +79,7 @@ async function printChart(key, value, color) {
         bodyFontColor: '#303030' 
       }
     }
-  });
+  })
 }
 
 function changeSearch() {
@@ -88,15 +88,27 @@ function changeSearch() {
 
   if (searchInput.style.visibility === "hidden") {
     searchInput.style.visibility = "visible"
+    searchInput.style.width = "30vw"
     searchInput.focus()
-    searchInput.style.width = "20vw"
-
-    searchButton.style.visibility = "hidden"
   }
   else if (searchInput.value.length === 0) {
-    searchButton.style.visibility = "visible"
-
     searchInput.style.visibility = "hidden"
     searchInput.style.width = 0
+  }
+}
+
+function search(textInput) {
+  let main = document.querySelector("main")
+  let cards = main.getElementsByClassName("cryptoCurrencyCard")
+  let input = textInput.toUpperCase()
+
+  for (i = 0; i < cards.length; i++) {
+    let abbr = cards[i].getElementsByTagName("abbr")[0]
+
+    if (abbr.innerHTML.toUpperCase().indexOf(input) > -1) {
+      cards[i].style.display = ""
+    } else {
+      cards[i].style.display = "none"
+    }
   }
 }

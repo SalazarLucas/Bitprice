@@ -17,7 +17,7 @@
 			<h1>BitPrice</h1>
 			<div id="searchBar" style="display: flex;">
 				<div id="searchBtn" onclick="changeSearch();"></div>
-				<input id="searchInp" type="text" onfocusout="changeSearch()">
+				<input id="searchInp" type="text" onblur="changeSearch()" onkeyup="search(this.value)">
 			</div>
 		</header>
 
