@@ -1,5 +1,5 @@
 <h1 align="center">
-  <a href="http://bitprice.pythonanywhere.com/">Bitprice</a>
+  <a href="https://cryptobitprice.herokuapp.com/">Bitprice</a>
   <div>
     <img src="https://img.shields.io/badge/Flask-Python-brightgreen"/>
     <img src="https://img.shields.io/badge/HTML5-red"/>
