@@ -1,4 +1,4 @@
-# [Bitprice](ttps://cryptobitprice.herokuapp.com/)
+# [Bitprice](https://cryptobitprice.herokuapp.com/)
 
 ![Flask|Python](https://img.shields.io/badge/Flask-Python-brightgreen)
 ![HTML5](https://img.shields.io/badge/HTML5-red)
