@@ -1,4 +1,4 @@
-async function printChart(key, value, color) {
+async function printChart(key, value) {
   let times = await value.map(time => time[0])
   let prices = await value.map(price => price[1])
 
@@ -6,7 +6,7 @@ async function printChart(key, value, color) {
 
   let gradient = chart.createLinearGradient(0, 0, 0, 400)
 
-  let alpha_color = color + "80"
+  let alpha_color = "#00C0FF" + "80"
 
   gradient.addColorStop(0, alpha_color)
   gradient.addColorStop(.425, 'rgba(255,193,119,0)')
@@ -22,10 +22,10 @@ async function printChart(key, value, color) {
         label: '$',
         data: prices,
         backgroundColor: gradient,
-        borderColor: color,
+        borderColor: '#00C0FF',
         borderJoinStyle: 'round',
         borderCapStyle: 'round',
-        borderWidth: 3,
+        borderWidth: 1,
         pointRadius: 0,
         pointHitRadius: 10,
         lineTension: .2,
@@ -80,35 +80,4 @@ async function printChart(key, value, color) {
       }
     }
   })
-}
-
-function changeSearch() {
-  searchButton = document.querySelector("#searchBtn")
-  searchInput = document.querySelector("#searchInp")
-
-  if (searchInput.style.visibility === "hidden") {
-    searchInput.style.visibility = "visible"
-    searchInput.style.width = "30vw"
-    searchInput.focus()
-  }
-  else if (searchInput.value.length === 0) {
-    searchInput.style.visibility = "hidden"
-    searchInput.style.width = 0
-  }
-}
-
-function search(textInput) {
-  let main = document.querySelector("main")
-  let cards = main.getElementsByClassName("cryptoCurrencyCard")
-  let input = textInput.toUpperCase()
-
-  for (i = 0; i < cards.length; i++) {
-    let abbr = cards[i].getElementsByTagName("abbr")[0]
-
-    if (abbr.innerHTML.toUpperCase().indexOf(input) > -1) {
-      cards[i].style.display = ""
-    } else {
-      cards[i].style.display = "none"
-    }
-  }
 }

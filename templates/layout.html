@@ -13,14 +13,6 @@
 		<script type="text/javascript" src="{{ url_for('static', filename='helpers.js') }}"></script>
 	</head>
 	<body>
-		<header id="appNavBar">
-			<h1>BitPrice</h1>
-			<div id="searchBar" style="display: flex;">
-				<div id="searchBtn" onclick="changeSearch();"></div>
-				<input id="searchInp" type="text" onblur="changeSearch()" onkeyup="search(this.value)">
-			</div>
-		</header>
-
 		{% block main %}{% endblock %}
 
 		<footer>

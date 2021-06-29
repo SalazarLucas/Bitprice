@@ -6,7 +6,6 @@
             <div class="cryptoCurrencyCard" id="{{ k }}Card">
                 <header>
                     <section class="cryptocurrencyName">
-                        <img src="static/icons/{{ k }}.png">
                         <abbr title="{{ k }}">
                             {{ v['name'] }}
                         </abbr>
@@ -18,7 +17,7 @@
 
                 <canvas class="cardChart" id="{{ k }}"></canvas>
             </div>
-            <script>printChart("{{ k | safe }}", {{ v["rates"] | safe }}, "{{ colors[k] | safe }}")</script>
+            <script>printChart("{{ k | safe }}", {{ v["rates"] | safe }})</script>
         {% endfor %}
     </main>
 {% endblock %}

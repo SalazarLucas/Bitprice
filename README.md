@@ -1,4 +1,4 @@
-# [Bitprice](https://cryptobitprice.herokuapp.com/)
+# [CryptoBitprice](https://cryptobitprice.herokuapp.com/)
 
 ![Flask|Python](https://img.shields.io/badge/Flask-Python-brightgreen)
 ![HTML5](https://img.shields.io/badge/HTML5-red)
@@ -7,7 +7,7 @@
 
 ## Topics
 
-[About Bitprice]()
+[About CryptoBitprice]()
 
 [Technologies]()
 
@@ -15,13 +15,9 @@
 
 [License]()
 
-## About Bitprice
+## About CryptoBitprice
 
-<div align="center">
-  <img src="image.png" width="500">
-</div>
-
-A simple web application used as my final project of [CS50x](https://cs50.harvard.edu/x/2020/). It is written in flask and shows the current price of some criptocurrencies and its price in the last 30 days.
+CryptoBitprice is simple web application used as my final project of [CS50x](https://cs50.harvard.edu/x/2020/). It is written in flask and shows the current price in USD of some criptocurrencies and a chart displaying the price variation.
 
 ## Technologies
 
