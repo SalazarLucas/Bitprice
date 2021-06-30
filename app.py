@@ -1,33 +1,20 @@
-from flask import Flask
-from flask_restful import Api, Resource
+from flask import Flask, render_template
+from helpers import Client
 
 app = Flask(__name__)
-api = Api(app)
+client = Client()
 
 
 @app.route('/')
 def index():
-    return 'Ok'
+    return render_template('index.html', data=client.get_crypto_data())
 
 
-class Ticker(Resource):
-    def get(self):
-        # TODO
-        return {
-            'message': 'Ok'
-        }
+@app.route('/<string:cryptocurrency>')
+def cryptocurrency(cryptocurrency):
+    price = client.get_ticker(cryptocurrency)
+    return f'{price}'
 
-
-class Rates(Resource):
-    def get(self):
-        # TODO
-        return {
-            'message': 'Ok'
-        }
-
-
-api.add_resource(Ticker, '/ticker')
-api.add_resource(Rates, '/rates')
 
 if __name__ == '__main__':
     app.run(debug=True)
