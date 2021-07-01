@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 class Client:
@@ -8,13 +9,9 @@ class Client:
     def get_ticker(self, id):
         # Requests the API
         ticker = self.__base_url + f'/products/{id}-USD/ticker'
-        request = requests.get(ticker)
+        response = requests.get(ticker)
 
-        # Parse response
-        response = request.json()
-        price = response['price']
-
-        return price
+        return response.json()
 
     def __get_currencies(self):
         # Requests the API

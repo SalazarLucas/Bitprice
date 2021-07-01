@@ -12,8 +12,11 @@ def index():
 
 @app.route('/<string:cryptocurrency>')
 def cryptocurrency(cryptocurrency):
-    price = client.get_ticker(cryptocurrency)
-    return f'{price}'
+    return render_template(
+        'crypto.html',
+        currency=cryptocurrency,
+        data=client.get_ticker(cryptocurrency)
+    )
 
 
 if __name__ == '__main__':
