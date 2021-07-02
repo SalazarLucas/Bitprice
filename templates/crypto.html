@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CryptoBitprice: {{ currency }}</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    </head>
-    <body>
-        <h1>1 {{ currency }} = $ {{ data["price"] }}</h1>
-    </body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}CryptoBitPrice: {{ currency }}{% endblock %}
+
+{% block body %}
+    <div id="cryptoInfoContainer">
+        <div id="cryptoInfo">
+            <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@07fd63a0b662ed99c8ad870ee9227b8ef5e11630/svg/color/{{ currency.lower() }}.svg" alt=" " width="13%">
+            <p>1 {{ currency }} = $ {{ data["price"] }}</p>
+            <a href="/">
+                <img src="{{ url_for('static', filename='backBtn.png') }}" alt="">
+            </a>
+        </div>
+    </div>
+{% endblock %}

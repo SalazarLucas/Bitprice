@@ -1,17 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CryptoBitPrice</title>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='helpers.js') }}"></script>
-    </head>
-    <body>
+{% extends "layout.html" %}
+
+{% block title %}CryptoBitPrice{% endblock %}
+
+{% block body %}
+    <div id="currencyContainer">
         {% for crypto in data %}
-            <h1>{{ crypto['name'] }} ({{ crypto['id'] }})</h1>
+            <a class="cryptoHeadingLink" href="/{{ crypto['id'] }}">
+                <div class="cryptoHeading">
+                    <h1>
+                        <abbr title="{{ crypto['id'] }}" style="text-decoration: none;">
+                            {{ crypto['name'] }}
+                        </abbr>
+                    </h1>
+                </div>
+            </a>
         {% endfor %}
-    </body>
-</html>
+    </div>
+{% endblock %}

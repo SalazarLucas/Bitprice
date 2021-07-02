@@ -1,1 +1,53 @@
 * {margin: 0; padding: 0;}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#currencyContainer {
+    align-content: center;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.cryptoHeading {
+    background-color: rgb(250, 250, 250);
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    margin: 20px;
+    min-width: 250px;
+    padding: 15px 0;
+    text-align: center;
+    width: 30vw;
+}
+
+.cryptoHeadingLink {
+    color: rgb(40, 40, 40);
+    font-weight: bolder;
+    text-decoration: none;
+}
+
+#cryptoInfoContainer {
+    height: 100vh;
+    position: relative;
+}
+
+#cryptoInfo {
+    min-width: 275px;
+    width: 80vw;
+    font-size: 6vw;
+    font-weight: bolder;
+    text-align: center;
+    color: rgb(40, 40, 40);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#cryptoInfo > a > img {
+    border-radius: 10px;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+}
