@@ -16,7 +16,7 @@
 
 ## About CryptoBitprice
 
-CryptoBitprice is simple web application used as my final project of [CS50x](https://cs50.harvard.edu/x/2020/). It is written in flask and shows the current price in USD of some criptocurrencies and a chart displaying the price variation.
+CryptoBitprice is simple web application used as my final project of [CS50x](https://cs50.harvard.edu/x/2020/). It is written in flask and shows the current price in USD of some criptocurrencies.
 
 ## Technologies
 
