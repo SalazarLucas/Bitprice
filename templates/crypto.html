@@ -5,10 +5,10 @@
 {% block body %}
     <div id="cryptoInfoContainer">
         <div id="cryptoInfo">
-            <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@07fd63a0b662ed99c8ad870ee9227b8ef5e11630/svg/color/{{ currency.lower() }}.svg" alt=" " width="13%">
+            <img src="https://cdn.jsdelivr.net/gh/atomiclabs/cryptocurrency-icons@07fd63a0b662ed99c8ad870ee9227b8ef5e11630/svg/color/{{ currency.lower() }}.svg" alt=" " width="70px">
             <p>1 {{ currency }} = $ {{ data["price"] }}</p>
             <a href="/">
-                <img src="{{ url_for('static', filename='backBtn.png') }}" alt="">
+                <img src="{{ url_for('static', filename='backBtn.png') }}" alt="" width="50px">
             </a>
         </div>
     </div>
